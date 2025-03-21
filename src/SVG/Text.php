@@ -6,6 +6,31 @@ use Stringable;
 
 class Text implements Stringable
 {
+    public static function multiline(
+        string $content,
+        float $lineHeight = 1.5,
+        float $x = 0,
+        float $y = 0,
+        int $fontSize = 16,
+        mixed ...$args,
+    ) {
+        $children = [];
+
+        $lineNumber = 0;
+        foreach (explode("\n", $content) as $line) {
+            $children[] = new static(
+                $line,
+                $x,
+                $y + $fontSize * $lineHeight * $lineNumber,
+                ...$args,
+            );
+
+            $lineNumber++;
+        }
+
+        return $children;
+    }
+
     public function __construct(
         protected null|int|float|string $content,
         protected float $x = 0,

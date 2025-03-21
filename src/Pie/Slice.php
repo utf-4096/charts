@@ -26,7 +26,7 @@ class Slice
                 d: $pathData,
                 fill: $this->color,
             ),
-            new Text(
+            ...Text::multiline(
                 content: $labelText,
                 x: $labelX,
                 y: $labelY,
