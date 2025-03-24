@@ -19,7 +19,8 @@ class PieChart
         public int $fontSize = 14,
         public string $fontFamily = 'arial',
         public string $color = 'black',
-        ?Closure $formatter = null
+        ?Closure $formatter = null,
+        public bool $rotateText = false
     ) {
         $this->formatter = $formatter ?? fn (string $label, float $percentage) => "$label - $percentage%";
     }
@@ -64,7 +65,8 @@ class PieChart
             $currentAngle += $sliceAngle;
             $largeArcFlag = $sliceAngle > 180 ? 1 : 0;
 
-            $midAngle = deg2rad($currentAngle - $sliceAngle / 2);
+            $midAngleDeg = $currentAngle - $sliceAngle / 2;
+            $midAngle = deg2rad($midAngleDeg);
             $explodeX = $slice->explodeDistance * cos($midAngle);
             $explodeY = $slice->explodeDistance * sin($midAngle);
 
@@ -83,7 +85,14 @@ class PieChart
 
             $percentage = round(($slice->value / $total) * 100, 2);
 
-            $svg .= $slice->render($this, $pathData, $labelX, $labelY, $percentage);
+            $svg .= $slice->render(
+                chart: $this,
+                pathData: $pathData,
+                labelX: $labelX,
+                labelY: $labelY,
+                percentage: $percentage,
+                transform: $this->getTextTransform($midAngleDeg, $labelX, $labelY),
+            );
         }
 
         if (count($this->slices) === 1) {
@@ -99,6 +108,19 @@ class PieChart
         }
 
         return $svg;
+    }
+
+    protected function getTextTransform(int|float $angle, int $labelX, int $labelY): ?string
+    {
+        if (! $this->rotateText) {
+            return null;
+        }
+
+        if ($angle > 90 && $angle < 270) {
+            $angle = $angle - 180;
+        }
+
+        return "rotate({$angle}, {$labelX}, {$labelY})";
     }
 
     protected function background(): string
