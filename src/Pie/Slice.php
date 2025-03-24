@@ -17,7 +17,7 @@ class Slice
         public float $explodeDistance = 0.0,
     ) {}
 
-    public function render(PieChart $chart, string $pathData, float $labelX, float $labelY, float $percentage): string
+    public function render(PieChart $chart, string $pathData, float $labelX, float $labelY, float $percentage, ?string $transform = null): string
     {
         $labelText = $chart->formatter->call($chart, $this->label, $percentage);
 
@@ -35,6 +35,7 @@ class Slice
                 fill: $this->labelColor ?? $chart->color,
                 textAnchor: 'middle',
                 dominantBaseline: 'middle',
+                transform: $transform,
             ),
         ]);
     }
