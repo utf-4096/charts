@@ -91,7 +91,7 @@ class PieChart
                 labelX: $labelX,
                 labelY: $labelY,
                 percentage: $percentage,
-                transform: $this->getTextTransform($midAngleDeg, $labelX, $labelY),
+                transform: $this->getTextTransform($midAngleDeg, $labelX, $labelY, $sliceAngle),
             );
         }
 
@@ -110,9 +110,13 @@ class PieChart
         return $svg;
     }
 
-    protected function getTextTransform(int|float $angle, int $labelX, int $labelY): ?string
+    protected function getTextTransform(int|float $angle, int $labelX, int $labelY, int|float $sliceAngle): ?string
     {
         if (! $this->rotateText) {
+            return null;
+        }
+
+        if ($sliceAngle > 30) {
             return null;
         }
 
@@ -136,3 +140,4 @@ class PieChart
         );
     }
 }
+
